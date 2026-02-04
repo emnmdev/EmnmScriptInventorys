@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>EmnmScript Store</title>
+
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+
+    body{
+      font-family:Poppins,sans-serif;
+      background:radial-gradient(circle at top,#200000,#050505);
+      color:white;
+      overflow-x:hidden;
+    }
+
+    header{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:18px 35px;
+      background:rgba(15,15,15,0.9);
+      border-bottom:2px solid red;
+      backdrop-filter:blur(15px);
+      position:sticky;
+      top:0;
+      z-index:999;
+    }
+
+    header h1{
+      font-size:30px;
+      color:red;
+      font-weight:900;
+      text-shadow:0 0 15px red;
+    }
+
+    header p{
+      font-size:13px;
+      color:#bbb;
+      margin-top:2px;
+    }
+
+    .profile-btn{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      cursor:pointer;
+      padding:8px 14px;
+      border-radius:14px;
+      transition:0.2s;
+    }
+
+    .profile-btn:hover{
+      background:rgba(255,0,0,0.12);
+    }
+
+    .profile-btn img{
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      border:2px solid red;
+      object-fit:cover;
+    }
+
+    .container{
+      max-width:1250px;
+      margin:auto;
+      padding:30px;
+    }
+
+    h2{
+      margin-bottom:15px;
+      font-size:22px;
+      color:#ff4444;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+      gap:22px;
+    }
+
+    .card{
+      background:rgba(20,20,20,0.85);
+      border-radius:20px;
+      padding:20px;
+      border:1px solid rgba(255,0,0,0.4);
+      box-shadow:0 0 25px rgba(255,0,0,0.18);
+      transition:0.25s;
+      position:relative;
+    }
+
+    .card:hover{
+      transform:translateY(-8px);
+      box-shadow:0 0 45px rgba(255,0,0,0.35);
+    }
+
+    .card h3{
+      font-size:19px;
+      color:#ff5555;
+      margin-bottom:6px;
+    }
+
+    .desc{
+      font-size:13px;
+      color:#ccc;
+      line-height:1.5;
+      margin-bottom:10px;
+    }
+
+    .stats{
+      font-size:12px;
+      color:#aaa;
+      display:flex;
+      justify-content:space-between;
+      margin-bottom:8px;
+    }
+
+    button{
+      width:100%;
+      padding:11px;
+      border:none;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:700;
+      margin-top:8px;
+      transition:0.2s;
+    }
+
+    .btn{
+      background:linear-gradient(90deg,red,darkred);
+      color:white;
+    }
+    .btn:hover{opacity:0.85;}
+
+    .btn2{
+      background:#222;
+      color:white;
+    }
+    .btn2:hover{background:#444;}
+
+    .fav{
+      position:absolute;
+      top:15px;
+      right:15px;
+      font-size:20px;
+      cursor:pointer;
+      color:gray;
+    }
+    .fav.active{color:red;}
+
+    textarea{
+      width:100%;
+      height:200px;
+      margin-top:15px;
+      background:black;
+      color:lime;
+      border:2px solid red;
+      border-radius:15px;
+      padding:15px;
+      resize:none;
+      font-size:13px;
+    }
+
+    .rating span{
+      font-size:22px;
+      cursor:pointer;
+      color:gray;
+    }
+    .rating span.active{color:gold;}
+
+    .rating-list{
+      font-size:12px;
+      margin-top:5px;
+      max-height:70px;
+      overflow:auto;
+      color:#bbb;
+    }
+
+    .comment-box input{
+      width:100%;
+      padding:9px;
+      border-radius:12px;
+      border:none;
+      margin-top:10px;
+      outline:none;
+    }
+
+    .comments{
+      font-size:12px;
+      margin-top:6px;
+      max-height:80px;
+      overflow:auto;
+      color:#ccc;
+    }
+
+    .page{display:none;}
+    .page.active{display:block;}
+
+    /* MODAL */
+    .modal{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.85);
+      justify-content:center;
+      align-items:center;
+      z-index:9999;
+    }
+
+    .modal-content{
+      width:360px;
+      background:#111;
+      padding:25px;
+      border-radius:20px;
+      border:2px solid red;
+      text-align:center;
+      box-shadow:0 0 40px rgba(255,0,0,0.4);
+    }
+
+    .modal-content img{
+      width:95px;
+      height:95px;
+      border-radius:50%;
+      border:2px solid red;
+      margin:12px 0;
+      object-fit:cover;
+    }
+
+    .modal-content input{
+      width:90%;
+      padding:10px;
+      border-radius:12px;
+      border:none;
+      margin-top:10px;
+    }
+
+    .notif{
+      position:fixed;
+      bottom:25px;
+      left:50%;
+      transform:translateX(-50%);
+      background:red;
+      padding:12px 18px;
+      border-radius:14px;
+      display:none;
+      font-weight:700;
+      box-shadow:0 0 20px red;
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>EmnmScript</h1>
+    <p>🔥 Premium Script Store • Copy • Share • Rating • Comment • AnjayKelass</p>
+  </div>
+
+  <div class="profile-btn" onclick="openSettings()">
+    <img id="profilePic" src="https://i.ibb.co/2qz7G9d/default.png">
+    <span id="profileName">Guest</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- LOBBY -->
+  <div id="lobby" class="page active">
+    <h2>🚀 Script Inventory</h2>
+    <div class="grid" id="productGrid"></div>
+  </div>
+
+  <!-- FOLLOW PAGE -->
+  <div id="followPage" class="page">
+    <h2>🚨 Verifikasi Dulu Bisa Kali</h2>
+    <p style="margin-bottom:15px;color:#bbb;">
+      Follow TikTok & Join Saluran WhatsApp sebelum ambil script!
+    </p>
+
+    <button class="btn" onclick="window.open('https://tiktok.com/@emnmscript7','_blank')">
+      Follow TikTok @emnmscript7
+    </button>
+
+    <button class="btn" onclick="window.open('https://whatsapp.com/channel/0029VbB7vN4BA1euNNDQXZ2V','_blank')">
+      Join Saluran WhatsApp
+    </button>
+
+    <button class="btn2" onclick="lanjutScript()">
+      Saya sudah follow → Ambil Script
+    </button>
+  </div>
+
+  <!-- SCRIPT PAGE -->
+  <div id="scriptPage" class="page">
+    <h2 id="judulScript"></h2>
+
+    <textarea id="scriptBox" readonly></textarea>
+
+    <button class="btn" onclick="copyScript()">📋 Copy Script</button>
+    <button class="btn2" onclick="shareWA()">📤 Share WhatsApp</button>
+    <button class="btn2" onclick="shareIG()">📸 Share Instagram</button>
+
+    <button class="btn" onclick="backLobby()">⬅ Back Lobby</button>
+  </div>
+
+</div>
+
+<!-- NOTIF -->
+<div class="notif" id="notifBox"></div>
+
+<!-- SETTINGS -->
+<div class="modal" id="settingsModal">
+  <div class="modal-content">
+    <h2>⚙ Settings Akun</h2>
+
+    <img id="previewPic" src="https://i.ibb.co/2qz7G9d/default.png">
+    <input type="file" accept="image/*" onchange="changePic(event)">
+    <input id="newName" placeholder="Ganti Nama Akun...">
+
+    <button class="btn" onclick="saveProfile()">Simpan</button>
+    <button class="btn2" onclick="closeSettings()">Tutup</button>
+  </div>
+</div>
+
+<script>
+/* =======================
+   DATABASE PRODUK (12)
+======================= */
+const products=[
+ {id:1,name:"Bloxfruit Solix Hub",desc:"AutoFarm + AutoRaid + Boss",
+  script:`loadstring(game:HttpGet("https://rawscripts.net/raw/GRAVITY-Blox-Fruits-BEST-SCRIPT-SOLARA-AND-XENO-AUTO-V4-AUTO-LEVEL-AUTO-RAID-37566"))()`},
+
+ {id:2,name:"MM2 Esp",desc:"Esp,Invisible,Godmode,InfJump",
+  script:`loadstring(game:HttpGet(('https://pastefy.app/VuSbzEK8/raw')))()`},
+
+ {id:3,name:"Escape Police For Brainrots",desc:"Unlock VIP, Instant Take",
+  script:`loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/EscapePoliceForBrainrots"))()`},
+
+ {id:4,name:"Escape Tsunami For Fish",desc:"Remove Tsunami, Instant Take",
+  script:`loadstring(game:HttpGet("https://raw.githubusercontent.com/gumanba/Scripts/main/EscapeTsunamiForFish"))()`},
+
+ {id:5,name:"Death note Fling",desc:"Auto Fling the target",
+  script:`loadstring(game:HttpGet(('https://pastefy.app/9Z4Mti1Z/raw')))()`},
+
+ {id:6,name:"HD",desc:"Hd Quality No Lag",
+  script:`loadstring(game:HttpGet(('https://pastefy.app/auftjTgW/raw')))()`},
+
+ {id:7,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ {id:8,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ {id:9,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ {id:10,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ {id:11,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ /* ✅ FIXED: koma ditambah */
+ {id:12,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ /* produk lu lanjut aman */
+ {id:13,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`},
+
+ {id:14,name:"Coming Soon",desc:"Coming Soon",
+  script:`Coming Soon`}
+];
+
+let selectedId=null;
+let rated={},commentsCount={},views={},favorites={};
+
+/* LOAD PRODUK FIX */
+function loadProducts(){
+  let grid=document.getElementById("productGrid");
+  grid.innerHTML="";
+
+  products.forEach(p=>{
+    views[p.id]=0;
+    commentsCount[p.id]=0;
+
+    grid.innerHTML+=`
+      <div class="card">
+        <div class="fav" id="fav${p.id}" onclick="toggleFav(${p.id})">❤</div>
+
+        <h3>${p.name}</h3>
+        <div class="stats">
+          <span id="views${p.id}">👁 0</span>
+          <span id="com${p.id}">💬 0</span>
+        </div>
+
+        <div class="desc">${p.desc}</div>
+
+        <button class="btn" onclick="ambilScript(${p.id})">Ambil Script</button>
+
+        <div class="rating" id="rate${p.id}">
+          ${[1,2,3,4,5].map(s=>`<span onclick="rateScript(${p.id},${s})">★</span>`).join("")}
+        </div>
+
+        <div class="rating-list" id="ratingList${p.id}"></div>
+
+        <div class="comment-box">
+          <input id="c${p.id}" placeholder="Komentar...">
+          <button class="btn2" onclick="addComment(${p.id})">Kirim</button>
+          <div class="comments" id="commentBox${p.id}"></div>
+        </div>
+      </div>
+    `;
+  });
+}
+
+function switchPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+
+function ambilScript(id){
+  selectedId=id;
+  views[id]++;
+  document.getElementById("views"+id).innerText="👁 "+views[id];
+  switchPage("followPage");
+}
+
+function lanjutScript(){
+  let p=products.find(x=>x.id===selectedId);
+  document.getElementById("judulScript").innerText="🔥 "+p.name;
+  document.getElementById("scriptBox").value=p.script;
+  switchPage("scriptPage");
+}
+
+function backLobby(){switchPage("lobby");}
+
+/* COPY FIX */
+function copyScript(){
+  let text=document.getElementById("scriptBox").value;
+
+  navigator.clipboard.writeText(text).then(()=>{
+    showNotif("✅ Script berhasil disalin!");
+  }).catch(()=>{
+    alert("Copy gagal, browser tidak support!, silahkan copy manual dengan tahan script lalu geser hingga full script lalu pilih salin!");
+  });
+}
+
+/* SHARE */
+function shareWA(){
+  let txt=document.getElementById("scriptBox").value;
+  window.open("https://wa.me/?text="+encodeURIComponent(txt),"_blank");
+}
+
+function shareIG(){
+  copyScript();
+  alert("📸 Script sudah dicopy!\nPaste ke Instagram Story/DM kamu!");
+}
+
+/* FAVORITE */
+function toggleFav(id){
+  favorites[id]=!favorites[id];
+  document.getElementById("fav"+id).classList.toggle("active");
+}
+
+/* COMMENT */
+function addComment(id){
+  let input=document.getElementById("c"+id);
+  if(input.value.trim()=="") return;
+
+  let name=document.getElementById("profileName").innerText;
+
+  document.getElementById("commentBox"+id).innerHTML +=
+    `💬 <b>${name}</b>: ${input.value}<br>`;
+
+  commentsCount[id]++;
+  document.getElementById("com"+id).innerText="💬 "+commentsCount[id];
+
+  input.value="";
+}
+
+/* RATING */
+function rateScript(id,star){
+  if(rated[id]) return alert("⚠ Kamu sudah rating!");
+  rated[id]=true;
+
+  let stars=document.querySelectorAll("#rate"+id+" span");
+  stars.forEach((s,i)=>{if(i<star)s.classList.add("active");});
+
+  let name=document.getElementById("profileName").innerText;
+  document.getElementById("ratingList"+id).innerHTML +=
+    `⭐ <b>${name}</b> rating ${star} bintang<br>`;
+}
+
+/* SETTINGS */
+function openSettings(){document.getElementById("settingsModal").style.display="flex";}
+function closeSettings(){document.getElementById("settingsModal").style.display="none";}
+
+function changePic(e){
+  let file=e.target.files[0];
+  let reader=new FileReader();
+  reader.onload=()=>document.getElementById("previewPic").src=reader.result;
+  reader.readAsDataURL(file);
+}
+
+function saveProfile(){
+  let name=document.getElementById("newName").value;
+  if(name.trim()!="") document.getElementById("profileName").innerText=name;
+  document.getElementById("profilePic").src=document.getElementById("previewPic").src;
+  showNotif("✅ Profil berhasil disimpan!");
+  closeSettings();
+}
+
+/* NOTIF */
+function showNotif(msg){
+  let box=document.getElementById("notifBox");
+  box.innerText=msg;
+  box.style.display="block";
+  setTimeout(()=>box.style.display="none",2500);
+}
+
+window.onload=loadProducts;
+</script>
+
+</body>
+</html>
